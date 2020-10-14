@@ -1,0 +1,59 @@
+<!-- <!DOCTYPE html>
+<html>
+    <head>
+        <title>Drawing App</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='draw.js') }}"></script>
+    </head>
+
+    <header>Draw a letter!</header>
+
+    <body>
+        <form id = "myForm" enctype="multipart/form-data">
+            <canvas id="canvas", name ="draw" width="280" height="280" style="border: 1px solid black;">
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        drawCanvas();
+                    });
+                </script>
+            </canvas>
+            <input type="label" id = 'url' name="url" value="">
+        </form>
+
+        <input type="button" id = 'clear' value="clear" onclick="return clearCanvas();">
+        <input type="button" id = 'predict' value="Predict" onclick="return save();">
+        {%if prediction%}
+        <h2 style="color:red;">Looks like a(n) {{ prediction }} ! </h2>
+        {%endif%}
+    </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Letter predictor</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='draw.js') }}"></script>
+    </head>
+    
+    <header> Draw a letter! </header>
+
+    <body>
+        <form id = "myForm" enctype="multipart/form-data">
+            <canvas id="canvas", name ="draw" width="280" height="280" style="border: 1px solid black;">
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        drawCanvas();
+                    });
+                </script>
+            </canvas>
+        </form>
+        <form id = "acc" action="{{ url_for('predict')}}" method="POST" enctype="multipart/form-data">
+            <input type="label" id = 'url' name="url" value="">
+            <input type="submit" id = 'predict' value="Predict" onclick="return save();">
+            {%if prediction%}
+                <h2 style="color:red;">This is {{ prediction }}! </h2>
+            {%endif%}
+        </form>
+    </body>
+</html>
