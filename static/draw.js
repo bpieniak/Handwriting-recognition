@@ -4,7 +4,7 @@ var clickX = new Array();
 var clickY = new Array();
 var clickDrag = new Array();
 var paint = false;
-var curColor = "#FF0000";
+var curColor = "#FFFFFF";
 
 
 function drawCanvas() {
@@ -50,8 +50,8 @@ function redraw() {
     
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
     context.strokeStyle = curColor;
-    context.lineJoin = "round";
-    context.lineWidth = 3;
+    context.lineJoin = 'round';
+    context.lineWidth = 30;
 
     for (var i = 0; i < clickX.length; i++) {
         context.beginPath();
