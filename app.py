@@ -14,6 +14,8 @@ app = flask.Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
+model = keras.models.load_model('./Models/full_model_cnn')
+
 @app.route('/')
 def home():
 	return flask.render_template('index.html')
@@ -35,12 +37,13 @@ def predict():
 
 	#check if user draw anything
 	if(vect.sum() == 0):
-		return flask.render_template('index.html',  prediction = None)
+		return flask.render_template('index.html',  prediction_labels = None, prediction_percent=None)
 	
 	pred = model.predict(vect)[0]
 
 	labels = ["%d" %i for i in range(0,10)] + list(string.ascii_uppercase) #list of strings 0-9 A-Z
 
+	# Calculating top-5 highest probabilities
 	pred_dict = dict(zip(labels, pred))
 	pred_sorted = sorted(pred_dict.items(), key=lambda x: x[1], reverse=True)[:5]
 	pred_labels = list(dict(pred_sorted).keys())
@@ -50,8 +53,5 @@ def predict():
 	return flask.render_template('index.html', prediction_labels = pred_labels, prediction_percent = pred_percent)
 
 if __name__ == '__main__':
-
-	model = keras.models.load_model('./Models/full_model_cnn')
-	# Bootstrap(app)
 	app.run(debug=True)
 	
