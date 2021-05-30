@@ -5,6 +5,8 @@ var clickY = new Array();
 var clickDrag = new Array();
 var paint = false;
 var curColor = "#FFFFFF";
+var offset_left = 0;
+var offset_top = 0;
 
 
 function drawCanvas() {
@@ -12,18 +14,24 @@ function drawCanvas() {
     canvas = document.getElementById('canvas');
     context = document.getElementById('canvas').getContext("2d");
 
+    for (var o = canvas; o ; o = o.offsetParent) {
+		offset_left += (o.offsetLeft - o.scrollLeft);
+		offset_top  += (o.offsetTop - o.scrollTop);
+    }
+
     $('#canvas').mousedown(function (e) {
-        var mouseX = e.pageX - this.offsetLeft;
-        var mouseY = e.pageY - this.offsetTop;
+        var mouseX = e.pageX - offset_left;
+        var mouseY = e.pageY - offset_top;
+        console.log(this.offsetTop)
 
         paint = true;
-        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        addClick(e.pageX - offset_left, e.pageY - offset_top);
         redraw();
     });
 
     $('#canvas').mousemove(function (e) {
         if (paint) {
-            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+            addClick(e.pageX - offset_left, e.pageY - offset_top, true);
             redraw();
         }
     });
@@ -51,7 +59,7 @@ function redraw() {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
     context.strokeStyle = curColor;
     context.lineJoin = 'round';
-    context.lineWidth = 30;
+    context.lineWidth = 15;
 
     for (var i = 0; i < clickX.length; i++) {
         context.beginPath();
