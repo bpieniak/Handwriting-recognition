@@ -1,5 +1,5 @@
 import flask
-import tensorflow as tf
+import flask
 from tensorflow import keras
 import numpy as np
 import cv2
@@ -9,22 +9,19 @@ import string
 import sys
 import logging
 
-app = flask.Flask(__name__, template_folder='templates')
+app = flask.Flask(__name__)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
-model = keras.models.load_model('./Models/full_model_cnn')
-labels = ["%d" %i for i in range(0,10)] + list(string.ascii_uppercase) #list of strings 0-9 A-Z
-
 @app.route('/')
 def home():
-	return flask.render_template('draw.html',  prediction = None)
-
+	return flask.render_template('index.html')
 
 @app.route('/', methods=['POST'])
 def predict():
 	draw = flask.request.form['url']
+
 	draw = draw[22:] 
 	draw_decoded = base64.b64decode(draw)
 	
@@ -38,12 +35,23 @@ def predict():
 
 	#check if user draw anything
 	if(vect.sum() == 0):
-		return flask.render_template('draw.html',  prediction = None)
+		return flask.render_template('index.html',  prediction = None)
 	
-	pred = model.predict(vect)
-	index_pred = np.argmax(pred)
-	
-	return flask.render_template('draw.html', prediction = labels[index_pred])
+	pred = model.predict(vect)[0]
+
+	labels = ["%d" %i for i in range(0,10)] + list(string.ascii_uppercase) #list of strings 0-9 A-Z
+
+	pred_dict = dict(zip(labels, pred))
+	pred_sorted = sorted(pred_dict.items(), key=lambda x: x[1], reverse=True)[:5]
+	pred_labels = list(dict(pred_sorted).keys())
+	pred_percent = list(dict(pred_sorted).values())
+	pred_percent = [str(np.round(p*100, 3))+"%" for p in pred_percent]
+
+	return flask.render_template('index.html', prediction_labels = pred_labels, prediction_percent = pred_percent)
 
 if __name__ == '__main__':
-	app.run()
+
+	model = keras.models.load_model('./Models/full_model_cnn')
+	# Bootstrap(app)
+	app.run(debug=True)
+	
